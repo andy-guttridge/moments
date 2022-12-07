@@ -4,6 +4,7 @@ import logo from '../assets/logo.png';
 import styles from '../styles/NavBar.module.css';
 import { NavLink } from 'react-router-dom'
 import { useCurrentUser } from '../contexts/CurrentUserContext';
+import Avatar from './Avatar';
 
 // Note we use a capital B in NavBar to avoid a naming conflict with the Bootstrap component.
 const NavBar = () => {
@@ -11,11 +12,24 @@ const NavBar = () => {
     // Here we access the useCurrentUser custom hook defined in CurrentUserContext so that we can find out whether the user is currently authenticated.
     const currentUser = useCurrentUser();
 
+    const addPostIcon = (
+        <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/posts/create"><i className="far fa-plus-square"></i>Add post</NavLink>
+    )
+
     // Here we define the icons to display for logged in or logged out users as constants, to tidy our code up.
     // We use a JSX fragment to wrap the links, as JSX expects us to return a single element, but we don't want to use a Div.
     const loggedInIcons =(
         <>
-            {currentUser?.username}
+            <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/feed"><i className="fas fa-stream"></i>Feed</NavLink>
+            <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/liked"><i className="fas fa-heart"></i>Liked</NavLink>
+            <NavLink className={styles.NavLink} to="/" onClick={() => {}}><i className="fas fa-sign-out-alt"></i>Sign-out</NavLink>
+            <NavLink 
+                className={styles.NavLink}
+                to={`/profiles/${currentUser?.profile_id}`}
+                onClick={() => {}}
+            >
+                <Avatar src={currentUser?.profile_image} text="Profile" height={40} />
+            </NavLink>
         </>
     )
     const loggedOutIcons = (
@@ -33,6 +47,8 @@ const NavBar = () => {
                 <NavLink to="/">
                     <Navbar.Brand><img src={logo}  alt="logo" height="45"></img></Navbar.Brand>
                 </NavLink>
+                {/* Display addPostIcon if the user is authenticated */}
+                {currentUser && addPostIcon}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto text-left">
