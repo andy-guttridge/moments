@@ -3,14 +3,26 @@ import { Navbar, Container, Nav} from 'react-bootstrap';
 import logo from '../assets/logo.png';
 import styles from '../styles/NavBar.module.css';
 import { NavLink } from 'react-router-dom'
-import { useCurrentUser } from '../contexts/CurrentUserContext';
+import { useCurrentUser, useSetCurrentUser } from '../contexts/CurrentUserContext';
 import Avatar from './Avatar';
+import axios from 'axios';
 
 // Note we use a capital B in NavBar to avoid a naming conflict with the Bootstrap component.
 const NavBar = () => {
     
-    // Here we access the useCurrentUser custom hook defined in CurrentUserContext so that we can find out whether the user is currently authenticated.
+    // Here we access the useCurrentUser and useSetCurrentUser custom hooks defined in CurrentUserContext so that we can find out whether the user is currently authenticated.
     const currentUser = useCurrentUser();
+    const setCurrentUser = useSetCurrentUser();
+
+    const handleSignOut = async (event) => {
+        try {
+            await axios.post('dj-rest-auth/logout/');
+            setCurrentUser(null);
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
     const addPostIcon = (
         <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/posts/create"><i className="far fa-plus-square"></i>Add post</NavLink>
@@ -22,7 +34,7 @@ const NavBar = () => {
         <>
             <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/feed"><i className="fas fa-stream"></i>Feed</NavLink>
             <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/liked"><i className="fas fa-heart"></i>Liked</NavLink>
-            <NavLink className={styles.NavLink} to="/" onClick={() => {}}><i className="fas fa-sign-out-alt"></i>Sign-out</NavLink>
+            <NavLink className={styles.NavLink} to="/" onClick={handleSignOut}><i className="fas fa-sign-out-alt"></i>Sign-out</NavLink>
             <NavLink 
                 className={styles.NavLink}
                 to={`/profiles/${currentUser?.profile_id}`}
@@ -38,6 +50,7 @@ const NavBar = () => {
             <NavLink className={styles.NavLink} activeClassName={styles.Active} to="/signup"><i className="fas fa-user-plus"></i>Sign-up</NavLink>
         </>
     )
+
   return (
     <div>
         <Navbar className={styles.NavBar} expand="md" fixed="top">
