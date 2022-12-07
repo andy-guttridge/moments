@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { useCurrentUser, useSetCurrentUser } from '../contexts/CurrentUserContext';
 import Avatar from './Avatar';
 import axios from 'axios';
+import useClickOutsideToggle from '../hooks/useClickOutsideToggle';
 
 // Note we use a capital B in NavBar to avoid a naming conflict with the Bootstrap component.
 const NavBar = () => {
@@ -13,7 +14,11 @@ const NavBar = () => {
     // Here we access the useCurrentUser and useSetCurrentUser custom hooks defined in CurrentUserContext so that we can find out whether the user is currently authenticated.
     const currentUser = useCurrentUser();
     const setCurrentUser = useSetCurrentUser();
+    
+    //  Here we destructure the values returned in an object from useClickOutsideToggle.
+    const {expanded, setExpanded, ref} = useClickOutsideToggle();
 
+    
     const handleSignOut = async (event) => {
         try {
             await axios.post('dj-rest-auth/logout/');
@@ -53,7 +58,8 @@ const NavBar = () => {
 
   return (
     <div>
-        <Navbar className={styles.NavBar} expand="md" fixed="top">
+        {/* expanded is a Bootstrap prop, which we set using our prop define above */}
+        <Navbar expanded={expanded} className={styles.NavBar} expand="md" fixed="top">
             <Container>
                 {/* Removed the default href attributes from some of the Navbar elements, as we handle our links in a different way. */}
                 {/* The to prop of the NavLink component specifies the URL we want this link to navigate to. */}
@@ -62,7 +68,9 @@ const NavBar = () => {
                 </NavLink>
                 {/* Display addPostIcon if the user is authenticated */}
                 {currentUser && addPostIcon}
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                {/* Here, onClick calls setExpanded with the opposite of whatever the current state is, as tracked by our expanded prop. */}
+                {/* We pass it our ref refHook defined in useClickOutsideToggle.js. This allows us to reference this DOM element elsewhere. */}
+                <Navbar.Toggle ref={ref} onClick={() => setExpanded(!expanded)} aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto text-left">
                         {/* The activeClassName prop specifies the class to apply when a specific link is active */}
