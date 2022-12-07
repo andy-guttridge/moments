@@ -5,3 +5,8 @@ axios.defaults.baseURL = 'https://moments-django-backend.herokuapp.com/';
 axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
 // Avoids CORS errors
 axios.defaults.withCredentials = true;
+
+// We will attach our axios interceptors to these axios instances.
+export const axiosReq = axios.create();
+export const axiosRes = axios.create();
+
