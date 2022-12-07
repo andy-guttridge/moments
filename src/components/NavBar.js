@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navbar, Container, Nav} from 'react-bootstrap';
 import logo from '../assets/logo.png';
 import styles from '../styles/NavBar.module.css';
 import { NavLink } from 'react-router-dom'
-import { CurrentUserContext } from '../App';
+import { useCurrentUser } from '../contexts/CurrentUserContext';
 
 // Note we use a capital B in NavBar to avoid a naming conflict with the Bootstrap component.
 const NavBar = () => {
     
-    // Here we access the CurrentUserContext context object we created in App.js so that we can find out whether the user is currently authenticated.
-    const currentUser = useContext(CurrentUserContext);
+    // Here we access the useCurrentUser custom hook defined in CurrentUserContext so that we can find out whether the user is currently authenticated.
+    const currentUser = useCurrentUser();
 
     // Here we define the icons to display for logged in or logged out users as constants, to tidy our code up.
     // We use a JSX fragment to wrap the links, as JSX expects us to return a single element, but we don't want to use a Div.
