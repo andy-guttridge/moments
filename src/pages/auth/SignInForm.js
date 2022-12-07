@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
@@ -15,8 +15,14 @@ import axios from 'axios'
 import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
+import { SetCurrentUserContext } from "../../App";
 
 function SignInForm() {
+    
+    // Here we use the useContext hook to subscribe to the context we set up in App.js.
+    // We can now use it below to store the user's authentication status.
+    const setCurrentUser = useContext(SetCurrentUserContext)
+
     //   Add your component logic here
     const [signInData, setSignInData] = useState({
         username: '',
@@ -38,7 +44,10 @@ function SignInForm() {
     const handleSubmit = async (event) => {
         event.preventDefault()
         try {
-            await axios.post('/dj-rest-auth/login/', signInData);
+            // Here we destructure the data returned from the post request, and store the current user authentication status
+            // using the setCurrentUserContext object we have access to via the setCurrentUser constant we defined at the top of the file.
+            const { data } = await axios.post('/dj-rest-auth/login/', signInData);
+            setCurrentUser(data.user)
             history.push('/');
         }
         catch(err){
