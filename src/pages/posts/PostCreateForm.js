@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,8 +13,6 @@ import appStyles from "../../App.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import Asset from "../../components/Asset";
 import { Image } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
-import { axiosReq } from "../../api/axiosDefaults";
 
 function PostCreateForm() {
 
@@ -27,12 +25,6 @@ function PostCreateForm() {
     })
 
     const { title, content, image } = postData;
-    
-    // We use this useRef hook to maintain a reference to the form file upload element. Note it has a ref prop where we give it this hook below.
-    const imageInput = useRef(null);
-    
-    // We use this useHistory hook to redirect the user.
-    const history = useHistory();
 
     const handleChange = (event) => {
         setPostData(
@@ -53,30 +45,6 @@ function PostCreateForm() {
             });
         }
     };
-    
-    // Handle form submission
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData();
-
-        formData.append('title', title);
-        formData.append('content', content);
-        // We have to retrieve the image file from the files array of the files form component.
-        formData.append('image', imageInput.current.files[0]);
-        // We have to refresh the user's access token before we make a request to create a post, because we are uploading an image file as well as text.
-        try {
-            const {data} = await axiosReq.post('/posts/', formData);
-            // Note our API returns some data about our newly created post. We can use this to redirect the user to a URL for the specific post, using the post id.
-            history.push(`/posts/${data.id}`);
-        }
-        catch(err){
-            console.log(err)
-            // A 401 error will be handled by our axios interceptor, so only set the error data if its a different error.
-            if (err.response?.status !== 401){
-                setErrors(err.response?.data)
-            }
-        }
-    }
 
     //   Remember this is a controlled form, hence the value props.
     const textFields = (
@@ -111,7 +79,7 @@ function PostCreateForm() {
     );
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form>
             <Row>
                 <Col className="py-2 p-0 p-md-2" md={7} lg={8}>
                     <Container
@@ -148,7 +116,6 @@ function PostCreateForm() {
                             id="image-upload"
                             accept="image/*"
                             onChange={handleChangeImage}
-                            ref={imageInput}
                             />
 
                         </Form.Group>
