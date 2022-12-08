@@ -6,6 +6,7 @@ import './api/axiosDefaults';
 import SignUpForm from './pages/auth/SignUpForm';
 import SignInForm from './pages/auth/SignInForm';
 import PostCreateForm from './pages/posts/PostCreateForm';
+import PostPage from './pages/posts/PostPage';
 
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
                     <Route exact path="/signin" render={() => <SignInForm />} />
                     <Route exact path="/signup" render={() => <SignUpForm />} />
                     <Route exact path="/posts/create" render={() => <PostCreateForm />} />
+                    {/* The colon before id in path means id is parameter that can be passed through the url. */}
+                    <Route exact path="/posts/:id" render={() => <PostPage/>} />
                     {/* We can use this generic route at the end of the Switch component to render a message if no path was found */}
                     <Route render={() => <p>Page not found!</p>} />
                 </Switch>

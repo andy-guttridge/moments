@@ -12,7 +12,7 @@ import styles from "../../styles/PostCreateEditForm.module.css";
 import appStyles from "../../App.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import Asset from "../../components/Asset";
-import { Image } from "react-bootstrap";
+import { Alert, Image } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 
@@ -27,17 +27,18 @@ function PostCreateForm() {
     })
 
     const { title, content, image } = postData;
-    
+
     // We use this useRef hook to maintain a reference to the form file upload element. Note it has a ref prop where we give it this hook below.
     const imageInput = useRef(null);
-    
+
     // We use this useHistory hook to redirect the user.
     const history = useHistory();
 
     const handleChange = (event) => {
         setPostData(
-            {...postData,
-            [event.target.name]: event.target.value,
+            {
+                ...postData,
+                [event.target.name]: event.target.value,
             }
         )
     }
@@ -45,7 +46,7 @@ function PostCreateForm() {
     const handleChangeImage = (event) => {
         // Here we check if there  is a file in the files array held within the event object, and if so set the value of our image prop to the URL of the image.
         // URL.createObjectURL provides a local URL to the file passed in to it. To access the image, we have to access the first item in the files array.
-        if (event.target.files.length){
+        if (event.target.files.length) {
             URL.revokeObjectURL(image);
             setPostData({
                 ...postData,
@@ -53,7 +54,7 @@ function PostCreateForm() {
             });
         }
     };
-    
+
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -65,14 +66,14 @@ function PostCreateForm() {
         formData.append('image', imageInput.current.files[0]);
         // We have to refresh the user's access token before we make a request to create a post, because we are uploading an image file as well as text.
         try {
-            const {data} = await axiosReq.post('/posts/', formData);
+            const { data } = await axiosReq.post('/posts/', formData);
             // Note our API returns some data about our newly created post. We can use this to redirect the user to a URL for the specific post, using the post id.
             history.push(`/posts/${data.id}`);
         }
-        catch(err){
+        catch (err) {
             console.log(err)
             // A 401 error will be handled by our axios interceptor, so only set the error data if its a different error.
-            if (err.response?.status !== 401){
+            if (err.response?.status !== 401) {
                 setErrors(err.response?.data)
             }
         }
@@ -82,21 +83,31 @@ function PostCreateForm() {
     const textFields = (
         <div className="text-center">
             {/* Add your form fields here */}
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-                type="text"
-                name="title"
-                value={title}
-                onChange={handleChange}
-            />
-            <Form.Label>Content</Form.Label>
-            <Form.Control
-                as="textarea"
-                name="content"
-                rows={6}
-                value={content}
-                onChange={handleChange}
-            />
+            <Form.Group>
+                <Form.Label>Title</Form.Label>
+                <Form.Control
+                    type="text"
+                    name="title"
+                    value={title}
+                    onChange={handleChange}
+                />
+            </Form.Group>
+            {errors?.title?.map((message, idx) => (
+                <Alert variant="warning" key={idx}>{message}</Alert>
+            ))}
+            <Form.Group>
+                <Form.Label>Content</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    name="content"
+                    rows={6}
+                    value={content}
+                    onChange={handleChange}
+                />
+            </Form.Group>
+            {errors.content?.map((message, idx) => (
+                <Alert variant="warning" key={idx}>{message}</Alert>
+            ))}
 
             <Button
                 className={`${btnStyles.Button} ${btnStyles.Blue}`}
@@ -123,7 +134,7 @@ function PostCreateForm() {
                                 <>
                                     <figure>
                                         {/* Image is a React Bootstrap component. The rounded prop adds rounded corners. */}
-                                        <Image className={appStyles.Image} src={image} rounded/>
+                                        <Image className={appStyles.Image} src={image} rounded />
                                     </figure>
                                     <div>
                                         <Form.Label
@@ -136,22 +147,25 @@ function PostCreateForm() {
                                 </>
                             ) : (
                                 <Form.Label
-                                className="d-flex justify-content-center"
-                                htmlFor="image-upload"
-                            >
-                                <Asset src={Upload} message="Click or tap to upload an image" />
-                            </Form.Label>
+                                    className="d-flex justify-content-center"
+                                    htmlFor="image-upload"
+                                >
+                                    <Asset src={Upload} message="Click or tap to upload an image" />
+                                </Form.Label>
                             )}
-                            
+
                             {/* The value of the accept prop here ensures that users can only upload images. */}
                             <Form.File
-                            id="image-upload"
-                            accept="image/*"
-                            onChange={handleChangeImage}
-                            ref={imageInput}
+                                id="image-upload"
+                                accept="image/*"
+                                onChange={handleChangeImage}
+                                ref={imageInput}
                             />
 
                         </Form.Group>
+                        {errors?.image?.map((message, idx) => (
+                            <Alert variant="warning" key={idx}>{message}</Alert>
+                        ))}
                         <div className="d-md-none">{textFields}</div>
                     </Container>
                 </Col>
