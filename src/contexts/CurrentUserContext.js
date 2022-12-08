@@ -13,9 +13,9 @@ export const useSetCurrentUser = () => useContext(SetCurrentUserContext);
 
 // Note this component has a different name to the file. This is where we create the provider component that our children are wrapped in within index.js.
 // We destructure the children which are passed in.
-export const CurrentUserProvider = ({children}) => {
+export const CurrentUserProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
-    const history = useHistory()
+    const history = useHistory();
     
     // We handle our network request to check whether the user is authenticated when the component mounts.
     const handleMount = async () => {
@@ -26,7 +26,7 @@ export const CurrentUserProvider = ({children}) => {
             setCurrentUser(data);
         }
         catch(err){
-            console.log(err)
+            console.log(err);
         }
     }
     
@@ -74,7 +74,7 @@ export const CurrentUserProvider = ({children}) => {
                         await axios.post('dj-rest-auth/token/refresh/')
                     }
                     catch(err){
-                        setCurrentUser(prevCurrentUser => {
+                        setCurrentUser((prevCurrentUser) => {
                             if(prevCurrentUser){
                                 history.push('/signin')
                             }
@@ -88,7 +88,7 @@ export const CurrentUserProvider = ({children}) => {
                 }
             }
         )
-    }, [history])
+    }, [history]);
 
     return (
         // Here we use the context objects we created and exported above to make Provider components available to child components.

@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import appStyles from "../../App.module.css";
 import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults"
+import Post from "./Post";
 
 function PostPage() {
     // We use the useParams hook to access parameters passed in via a URL. We destructure it in place using the name of the parameter we defined in the <Route> component in App.js.
@@ -38,7 +39,9 @@ function PostPage() {
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
         <p>Popular profiles for mobile</p>
-        <p>Post component</p>
+        {/* Note we spread the values of our post.results object, so the values are passed in as props */}
+        {/* The postPage prop tells our Post component that it is being rendered into the Posts page so that it can tailor its appearance. */}
+        <Post {...post.results[0]} setPosts={setPost} postPage />
         <Container className={appStyles.Content}>
           Comments
         </Container>
