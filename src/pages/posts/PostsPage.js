@@ -14,6 +14,8 @@ import Post from "./Post";
 
 import NoResults from '../../assets/no-results.png';
 import Asset from "../../components/Asset";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchMoreData } from "../../utils/utils";
 
 // Destructure props in place
 function PostsPage({ message, filter = "" }) {
@@ -71,13 +73,22 @@ function PostsPage({ message, filter = "" }) {
                     />
                 </Form>
                 {/* Nested ternaries - have the posts loaded? If yes then display the posts or the no resuts message if none were returned. It not, then show loading spinner. */}
+                {/* Note we use the InfiniteScroll component from the React Infinite Scroll Component library. Its children prop takes our array of posts. */}
                 {hasLoaded ? (
                     <>
                         {posts.results.length ? (
-                            posts.results.map(post => (
-                                // Note we spread the post object to provide props to the Post component, and pass it the setPosts function so that users can like/unlike posts.
-                                <Post key={post.id} {...post} setPosts={setPosts} />
-                            ))
+                            <InfiniteScroll
+                                children={
+                                    posts.results.map(post => (
+                                        // Note we spread the post object to provide props to the Post component, and pass it the setPosts function so that users can like/unlike posts.
+                                        <Post key={post.id} {...post} setPosts={setPosts} />
+                                    ))
+                                }
+                                dataLength={posts.results.length} // Tell InfiniteScroll how many posts there are to be displayed.
+                                loader={<Asset spinner />} // Pass InfiniteScroll our spinner asset.
+                                hasMore={!!posts.next} // Tells InfiniteScroll if there is more data to be loaded after the current page. We use the next value returned by our API to derive a true or false. Because the API returns the number of the next page or null if there aren't any, we use !! to determine if the value is truthy or falsey.
+                                next={() => fetchMoreData(posts, setPosts)} // Pass in a function which InfiniteScroll will call if the hasMore prop is true.
+                            />
                         ) : (
                             <Container className={appStyles.Content}>
                                 {/* Use our Asset component, passing in the NoResults image and the message string we've received from the parent component. */}
