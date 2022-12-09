@@ -1,10 +1,11 @@
 import React from 'react'
 import { Card, Media, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useCurrentUser } from '../../contexts/CurrentUserContext';
 import styles from "../../styles/Post.module.css"
 import Avatar from "../../components/Avatar"
 import { axiosRes } from '../../api/axiosDefaults';
+import { MoreDropdown } from '../../components/MoreDropdown';
 
 const Post = (props) => {
     // Here we destructure all the props from our Post passed in from the parent component.
@@ -28,6 +29,22 @@ const Post = (props) => {
     const currentUser = useCurrentUser();
     // Find out if the current user is the owner of the post.
     const is_owner = currentUser?.username === owner;
+
+    const history = useHistory();
+
+    const handleEdit = () => {
+        history.push('/posts/${id}/edit')
+    }
+
+    const handleDelete = async () =>{
+        try  {
+            await axiosRes.delete(`/posts/${id}/`);
+            history.goBack()
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
 
     const handleLike = async () => {
         try {
@@ -80,7 +97,7 @@ const Post = (props) => {
                     <div className='d-flex align-items-center'>
                         <span>{updated_at}</span>
                         {/* If this post is being rendered into the Posts page and the user is the post owner, then render edit and delete options */}
-                        {is_owner && postPage && "..."}
+                        {is_owner && postPage && <MoreDropdown handleEdit={handleEdit} handleDelete={handleDelete} />}
                     </div>
                 </Media>
             </Card.Body>
