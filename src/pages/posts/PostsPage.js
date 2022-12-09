@@ -22,13 +22,17 @@ function PostsPage({ message, filter = "" }) {
 
     // The useLocation hook is from the React library, and returns data about the URL the user is currently on.
     const { pathname } = useLocation();
+    
+    // useState hooks for the user's search query.
+    const [query, setQuery] = useState("");
 
-    // We pass filter and pathname into the useEffect dependency array, so that our code to fetch the posts runs everytime either the filter or pathname is changed.
+    // We pass filter, query and pathname into the useEffect dependency array, so that our code to fetch the posts runs everytime either the filter or pathname is changed, or when the user changes their query text.
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // The filter parameter here comes from the prop we sent in from our <Route> component.
-                const { data } = await axiosReq.get(`/posts/?${filter}`);
+                // The filter parameter here comes from the prop we sent in from our <Route> component. We add this and the user's search term to the url we request from the API.
+                console.log("Filter:", filter)
+                const { data } = await axiosReq.get(`/posts/?${filter}search=${query}`);
                 // Set the posts to the loaded data and hasLoaded to true so that the spinner is not displayed.
                 setPosts(data);
                 setHasLoaded(true);
@@ -38,9 +42,16 @@ function PostsPage({ message, filter = "" }) {
             }
         }
         // Set hasLoaded to false before we fetch the posts, so that the loading spinner is displayed.
+        // We use setTimeout to delay a second before fetching the posts, so that our search results don't constantly update with every keypress when the user uses the search bar.
+        // We also return a clean up function to remove the timer.
         setHasLoaded(false);
-        fetchPosts();
-    }, [filter, pathname])
+        const timer = setTimeout(() => {
+            fetchPosts();
+        }, 1000)
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [filter, query, pathname])
 
     return (
         <Row className="h-100">
@@ -52,6 +63,8 @@ function PostsPage({ message, filter = "" }) {
                     onSubmit={(event) => event.preventDefault()}
                 >
                     <Form.Control
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
                         type="text"
                         className="mr-sm-2"
                         placeholder="Search posts"
@@ -60,7 +73,6 @@ function PostsPage({ message, filter = "" }) {
                 {/* Nested ternaries - have the posts loaded? If yes then display the posts or the no resuts message if none were returned. It not, then show loading spinner. */}
                 {hasLoaded ? (
                     <>
-                        {console.log("posts found")}
                         {posts.results.length ? (
                             posts.results.map(post => (
                                 // Note we spread the post object to provide props to the Post component, and pass it the setPosts function so that users can like/unlike posts.

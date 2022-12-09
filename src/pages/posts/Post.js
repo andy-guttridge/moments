@@ -93,7 +93,6 @@ const Post = (props) => {
                 {content && <Card.Text>{content}</Card.Text>}
                 <div className={styles.PostBar}>
                     {/* If user is the owner of the post, use Bootstrap overlay to tell them they can't like their own post */}
-                    {console.log(currentUser)}
                     {is_owner ? (
                         <OverlayTrigger placement="top" overlay={<Tooltip>You can't like your own post!</Tooltip>}>
                             <i className="far fa-heart" />

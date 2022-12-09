@@ -30,18 +30,23 @@ function App() {
                         exact
                         path="/feed"
                         render={() => (
-                            <PostsPage message="No results found. Adjust the search keyword or follow a user." />
+                            <PostsPage
+                                message="No results found. Adjust the search keyword or follow a user."
+                                filter={`owner__followed__owner__profile=${profile_id}&`}
+                            />
                         )}
-                        filter={`owner__followed__owner__profile=${profile_id}&`}
+                        
                     />
                     {/* We do the same again for our liked page, but with a different no results message and a different filter. */}
                     <Route
                         exact
                         path="/liked"
                         render={() => (
-                            <PostsPage message="No results found. Adjust the search keyword or like a post" />
+                            <PostsPage
+                                message="No results found. Adjust the search keyword or like a post"
+                                filter={`likes__owner__profile=${profile_id}&ordering=-likes__created_at&`}
+                            />
                         )}
-                        filter={`likes__owner__profile=${profile_id}&ordering=-likes__created_at&`}
                     />
                     <Route exact path="/signin" render={() => <SignInForm />} />
                     <Route exact path="/signup" render={() => <SignUpForm />} />
