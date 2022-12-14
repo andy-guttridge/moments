@@ -9,6 +9,7 @@ import PostCreateForm from './pages/posts/PostCreateForm';
 import PostPage from './pages/posts/PostPage';
 import PostsPage from './pages/posts/PostsPage';
 import { useCurrentUser } from './contexts/CurrentUserContext';
+import PostEditForm from './pages/posts/PostEditForm';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
                     <Route exact path="/posts/create" render={() => <PostCreateForm />} />
                     {/* The colon before id in path means id is parameter that can be passed through the url. */}
                     <Route exact path="/posts/:id" render={() => <PostPage/>} />
+                    <Route exact path="/posts/:id/edit" render={() => <PostEditForm />} />
                     {/* We can use this generic route at the end of the Switch component to render a message if no path was found */}
                     <Route render={() => <p>Page not found!</p>} />
                 </Switch>
