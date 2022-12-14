@@ -1,11 +1,52 @@
 import React from 'react'
 import { Media } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { axiosRes } from '../../api/axiosDefaults'
 import Avatar from '../../components/Avatar'
+import { MoreDropdown } from '../../components/MoreDropdown'
+import { useCurrentUser } from '../../contexts/CurrentUserContext'
 import styles from '../../styles/Comment.module.css'
 
 const Comment = (props) => {
-    const { profile_id, profile_image, owner, updated_at, content } = props
+    const { profile_id,
+            profile_image,
+            owner,
+            updated_at,
+            content,
+            id,
+            setPost,
+            setComments
+    } = props;
+
+    // Find out who the current user is.
+    const currentUser = useCurrentUser();
+
+    // Find out if the current user is the comment owner.
+    const is_owner = currentUser?.username === owner;
+
+    const handleDelete = async () => {
+        try {
+            await axiosRes.delete(`/comments/${id}/`)
+
+            // Decrement the posts count by 1.
+            setPost(prevPost => ({
+                results: [{
+                    ...prevPost.results[0],
+                    comments_count: prevPost.results[0].comments_count - 1
+                }]
+            }))
+            
+            // Remove the comment by filtering it out of the array of comments.
+            setComments(prevComments=>({
+                ...prevComments,
+                results: prevComments.results.filter((comment) => comment.id !== id),
+            }))
+
+        }
+        catch(err){
+
+        }
+    }
 
     return (
         <div>
@@ -17,8 +58,11 @@ const Comment = (props) => {
                 <Media.Body>
                     <span className={styles.Owner}>{owner}</span>
                     <span className={styles.Date}>{updated_at}</span>
-                    <p>content</p>
+                    <p>{content}</p>
                 </Media.Body>
+                {is_owner && (
+                    <MoreDropdown handleEdit={() => { }} handleDelete={handleDelete} />
+                )}
             </Media>
         </div>
     )
