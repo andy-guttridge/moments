@@ -16,12 +16,16 @@ import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
+import { useRedirect } from "../../hooks/useRedirect";
 
 function SignInForm() {
     
     // Here we use a custom hook defined in CurrentUserContext to subscribe to the context we set up in App.js.
     // We can now use it below to store the user's authentication status.
     const setCurrentUser = useSetCurrentUser();
+
+    // Redirect users from the sign-in page if they are already logged in.
+    useRedirect('loggedIn');
 
     //   Add your component logic here
     const [signInData, setSignInData] = useState({
@@ -48,7 +52,7 @@ function SignInForm() {
             // using the setCurrentUserContext object we have access to via the setCurrentUser constant we defined at the top of the file.
             const { data } = await axios.post('/dj-rest-auth/login/', signInData);
             setCurrentUser(data.user)
-            history.push('/');
+            history.goBack();
         }
         catch(err){
             // The question mark is an 'optional chain'. JS checks for the data so that we don't get an error if it doesn't exist.
