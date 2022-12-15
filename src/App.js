@@ -3,6 +3,7 @@ import NavBar from './components/NavBar';
 import Container from 'react-bootstrap/Container'
 import { Route, Switch } from 'react-router-dom'
 import './api/axiosDefaults';
+
 import SignUpForm from './pages/auth/SignUpForm';
 import SignInForm from './pages/auth/SignInForm';
 import PostCreateForm from './pages/posts/PostCreateForm';
@@ -11,6 +12,9 @@ import PostsPage from './pages/posts/PostsPage';
 import { useCurrentUser } from './contexts/CurrentUserContext';
 import PostEditForm from './pages/posts/PostEditForm';
 import ProfilePage from './pages/profiles/ProfilePage';
+import UsernameForm from "./pages/profiles/UsernameForm";
+import UserPasswordForm from "./pages/profiles/UserPasswordForm";
+import ProfileEditForm from "./pages/profiles/ProfileEditForm";
 
 
 function App() {
@@ -26,7 +30,7 @@ function App() {
                 {/* The Switch component holds all our Routes, and renders a given component when a Route matches a URL. */}
                 {/* The render prop on the Route component returns a component to be rendered when the URL is matched.  */}
                 <Switch>
-                    <Route exact path="/" render={() => <PostsPage message="No results found. Adjust the search keyword."/>} />
+                    <Route exact path="/" render={() => <PostsPage message="No results found. Adjust the search keyword." />} />
                     {/* For our feed page, we pass in a message which the PostsPage will use if no results are found, and a filter to find just posts by profies our user is following. */}
                     <Route
                         exact
@@ -37,7 +41,7 @@ function App() {
                                 filter={`owner__followed__owner__profile=${profile_id}&`}
                             />
                         )}
-                        
+
                     />
                     {/* We do the same again for our liked page, but with a different no results message and a different filter. */}
                     <Route
@@ -54,9 +58,24 @@ function App() {
                     <Route exact path="/signup" render={() => <SignUpForm />} />
                     <Route exact path="/posts/create" render={() => <PostCreateForm />} />
                     {/* The colon before id in path means id is parameter that can be passed through the url. */}
-                    <Route exact path="/posts/:id" render={() => <PostPage/>} />
+                    <Route exact path="/posts/:id" render={() => <PostPage />} />
                     <Route exact path="/posts/:id/edit" render={() => <PostEditForm />} />
                     <Route exact path="/profiles/:id" render={() => <ProfilePage />} />
+                    <Route
+                        exact
+                        path="/profiles/:id/edit/username"
+                        render={() => <UsernameForm />}
+                    />
+                    <Route
+                        exact
+                        path="/profiles/:id/edit/password"
+                        render={() => <UserPasswordForm />}
+                    />
+                    <Route
+                        exact
+                        path="/profiles/:id/edit"
+                        render={() => <ProfileEditForm />}
+                    />
                     {/* We can use this generic route at the end of the Switch component to render a message if no path was found */}
                     <Route render={() => <p>Page not found!</p>} />
                 </Switch>

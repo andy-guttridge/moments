@@ -22,6 +22,7 @@ import { fetchMoreData } from "../../utils/utils";
 
 import NoResults from '../../assets/no-results.png';
 import Post from "../posts/Post";
+import { ProfileEditDropdown } from "../../components/MoreDropdown";
 
 function ProfilePage() {
     const [hasLoaded, setHasLoaded] = useState(false);
@@ -57,6 +58,7 @@ function ProfilePage() {
 
     const mainProfile = (
         <>
+            {profile?.is_owner && <ProfileEditDropdown id={profile?.id} />}
             <Row noGutters className="px-3 text-center">
                 <Col lg={3} className="text-lg-left">
                     <Image className={styles.ProfileImage}
