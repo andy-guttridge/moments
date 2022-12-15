@@ -5,7 +5,7 @@ import appStyles from '../../App.module.css'
 import Asset from '../../components/Asset'
 import { useCurrentUser } from '../../contexts/CurrentUserContext'
 
-const PopularProfiles = () => {
+const PopularProfiles = ({ mobile }) => {
     const [profileData, setProfileData] = useState({
         pageProfie: { results: [] },
         popularProfiles: { results: [] },
@@ -33,14 +33,26 @@ const PopularProfiles = () => {
         handleMount();
     }, [currentUser])
 
+    // Note the conditional rendering of styles based on whether the mobile prop has been passed in.
     return (
-        <Container className={appStyles.Content}>
+        <Container className={`${appStyles.Content}
+            ${mobile && "d-lg-none text-center mb-3"}`
+        }>
             {popularProfiles.results.length ? (
                 <>
                     <p>Most followed profiles</p>
-                    {popularProfiles.results.map(profile => (
-                        <p key={profile.id}>{profile.owner}</p>
-                    ))}
+                    {/* If the mobile prop is present, we use slice to display only the first 4 profiles, and apply additional styling. */}
+                    {mobile ? (
+                        <div className="d-flex justify-content-around">
+                            {popularProfiles.results.slice(0, 4).map(profile => (
+                                <p key={profile.id}>{profile.owner}</p>
+                            ))}
+                        </div>
+                    ) : (
+                        popularProfiles.results.map(profile => (
+                            <p key={profile.id}>{profile.owner}</p>
+                        ))
+                    )}
                 </>
             ) : (
                 <Asset spinner />
