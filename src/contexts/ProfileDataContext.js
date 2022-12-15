@@ -12,7 +12,7 @@ export const useSetProfileData = () => useContext(SetProfileDataContext);
 
 export const ProfileDataProvider = ( {children} ) => {
     const [profileData, setProfileData] = useState({
-        pageProfie: { results: [] },
+        pageProfile: { results: [] },
         popularProfiles: { results: [] },
     })
 
