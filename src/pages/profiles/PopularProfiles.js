@@ -1,38 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Container } from 'react-bootstrap'
-import { axiosReq } from '../../api/axiosDefaults'
-import appStyles from '../../App.module.css'
-import Asset from '../../components/Asset'
-import { useCurrentUser } from '../../contexts/CurrentUserContext'
-import Profile from './Profile'
+import React from 'react';
+import { Container } from 'react-bootstrap';
+
+import appStyles from '../../App.module.css';
+import Asset from '../../components/Asset';
+import { useProfileData } from '../../contexts/ProfileDataContext';
+import Profile from './Profile';
 
 const PopularProfiles = ({ mobile }) => {
-    const [profileData, setProfileData] = useState({
-        pageProfie: { results: [] },
-        popularProfiles: { results: [] },
-    })
-
-    const { popularProfiles } = profileData;
-    const currentUser = useCurrentUser();
-    
-    // Note the dependency array for our useEffect hook contains the current user.
-    useEffect(() => {
-        const handleMount = async () => {
-            try {
-                const {data} = await axiosReq.get(
-                    '/profiles/?ordering=-followers_count'
-                );
-                setProfileData(prevState => ({
-                    ...prevState,
-                    popularProfiles: data,
-                }))
-            }
-            catch(err) {
-                console.log(err)
-            }
-        }
-        handleMount();
-    }, [currentUser])
+    const { popularProfiles } = useProfileData();
 
     // Note the conditional rendering of styles based on whether the mobile prop has been passed in.
     return (
