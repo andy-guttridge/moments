@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { axiosReq } from "../api/axiosDefaults";
+import { axiosReq, axiosRes } from "../api/axiosDefaults";
+import { followHelper } from "../utils/utils";
 import { useCurrentUser } from "./CurrentUserContext";
 
 export const ProfileDataContext = createContext();
@@ -17,6 +18,31 @@ export const ProfileDataProvider = ( {children} ) => {
     })
 
     const currentUser = useCurrentUser();
+    
+    // Handles a user clicking to follow a profile. The clickedProfile parameter is the profile to be followed.
+    const handleFollow = async (clickedProfile) => {
+        try {
+            const {data} = await axiosRes.post('/followers/', {
+                followed: clickedProfile.id
+            });
+        
+            setProfileData((prevState) => ({
+                ...prevState,
+                // Page profile displays the profile and stats for the selected profile.
+                pageProfile: {
+                    results: prevState.pageProfile.results.map((profile) => followHelper(profile, clickedProfile, data.id)),
+                },
+                // Popular profiles displays the profiles and buttons for 'Most followed profiles'
+                popularProfiles: {
+                    ...prevState.popularProfiles,
+                    results: prevState.popularProfiles.results.map((profile) => followHelper(profile, clickedProfile, data.id)),
+                },  
+            }))
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
     
     // Note the dependency array for our useEffect hook contains the current user.
     useEffect(() => {
@@ -39,7 +65,7 @@ export const ProfileDataProvider = ( {children} ) => {
 
     return (
         <ProfileDataContext.Provider value={profileData}>
-            <SetProfileDataContext.Provider value={setProfileData}>
+            <SetProfileDataContext.Provider value={{ setProfileData, handleFollow }}>
                 {children}
             </SetProfileDataContext.Provider>
         </ProfileDataContext.Provider>
