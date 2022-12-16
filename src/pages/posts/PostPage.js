@@ -40,7 +40,7 @@ function PostPage() {
                 setComments(comments)
             }
             catch (err) {
-                console.log(err)
+                // console.log(err)
             }
         }
         handleMount();

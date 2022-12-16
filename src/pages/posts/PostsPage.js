@@ -34,14 +34,13 @@ function PostsPage({ message, filter = "" }) {
         const fetchPosts = async () => {
             try {
                 // The filter parameter here comes from the prop we sent in from our <Route> component. We add this and the user's search term to the url we request from the API.
-                console.log("Filter:", filter)
                 const { data } = await axiosReq.get(`/posts/?${filter}search=${query}`);
                 // Set the posts to the loaded data and hasLoaded to true so that the spinner is not displayed.
                 setPosts(data);
                 setHasLoaded(true);
             }
             catch (err) {
-                console.log(err);
+                // console.log(err);
             }
         }
         // Set hasLoaded to false before we fetch the posts, so that the loading spinner is displayed.

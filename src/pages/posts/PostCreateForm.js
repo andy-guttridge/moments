@@ -72,7 +72,7 @@ function PostCreateForm() {
             history.push(`/posts/${data.id}`);
         }
         catch (err) {
-            console.log(err)
+            // console.log(err)
             // A 401 error will be handled by our axios interceptor, so only set the error data if its a different error.
             if (err.response?.status !== 401) {
                 setErrors(err.response?.data)
