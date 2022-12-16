@@ -17,6 +17,7 @@ import Asset from "../../components/Asset";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import PopularProfiles from "../profiles/PopularProfiles";
+import { useCurrentUser } from "../../contexts/CurrentUserContext";
 
 // Destructure props in place
 function PostsPage({ message, filter = "" }) {
@@ -28,6 +29,8 @@ function PostsPage({ message, filter = "" }) {
     
     // useState hooks for the user's search query.
     const [query, setQuery] = useState("");
+
+    const currentUser = useCurrentUser();
 
     // We pass filter, query and pathname into the useEffect dependency array, so that our code to fetch the posts runs everytime either the filter or pathname is changed, or when the user changes their query text.
     useEffect(() => {
@@ -53,7 +56,7 @@ function PostsPage({ message, filter = "" }) {
         return () => {
             clearTimeout(timer);
         }
-    }, [filter, query, pathname])
+    }, [filter, query, pathname, currentUser])
 
     return (
         <Row className="h-100">
