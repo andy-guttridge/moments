@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 
 // This import is where the code from the CI lessons starts.
 import {setupServer} from 'msw/node';
-import { handler } from './mocks/handlers';
+import { handlers } from './mocks/handlers';
 
 // Setup our mock server, using the handlers we've defined in mocks/handlers.js
 const server = setupServer(...handlers)
