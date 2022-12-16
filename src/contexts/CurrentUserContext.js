@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { axiosReq, axiosRes } from '../api/axiosDefaults';
 import { useHistory } from 'react-router-dom';
+import { removeTokenTimestamp, shouldRefreshToken } from '../utils/utils';
 
 // Here we use the React createContext function to create context objects that we can export for reference in other components.
 export const CurrentUserContext = createContext();
@@ -42,18 +43,23 @@ export const CurrentUserProvider = ({ children }) => {
             // Inside the try...catch block, we try to refresh the token. 
             // If this fails, the refresh token has expired, so they are re-directed to the sign-in page and the user set to null.
             // The request config is returned both inside and outside the catch block.
+            // Note we use our shouldRefreshToken function to find out whether details of a refresh token are in local storage. If not, the user isn't authenticated so don't bother request to refresh the token.
             async (config) => {
-                try {
-                    await axios.post('/dj-rest-auth/token/refresh/')
-                }
-                catch(err){
-                    setCurrentUser((prevCurrentUser) => {
-                        if(prevCurrentUser) {
-                            history.push('/signin')
-                        }
-                        return null
-                    })
-                    return config
+                if (shouldRefreshToken()){
+                    try {
+                        await axios.post('/dj-rest-auth/token/refresh/')
+                    }
+                    catch(err){
+                        setCurrentUser((prevCurrentUser) => {
+                            if(prevCurrentUser) {
+                                history.push('/signin')
+                            }
+                            return null
+                        });
+                        // Remove the token time stamp from local storage when the user is logged out.
+                        removeTokenTimestamp();
+                        return config
+                    }
                 }
                 return config
             },
@@ -79,7 +85,9 @@ export const CurrentUserProvider = ({ children }) => {
                                 history.push('/signin')
                             }
                             return null
-                        })
+                        });
+                        // Remove the token time stamp from local storage when the user is logged out.
+                        removeTokenTimestamp();
                         // Return the error details to exit the interceptor from the catch block.
                         return axios(err.config)
                     }

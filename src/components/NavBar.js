@@ -7,6 +7,7 @@ import { useCurrentUser, useSetCurrentUser } from '../contexts/CurrentUserContex
 import Avatar from './Avatar';
 import axios from 'axios';
 import useClickOutsideToggle from '../hooks/useClickOutsideToggle';
+import { removeTokenTimestamp } from '../utils/utils';
 
 // Note we use a capital B in NavBar to avoid a naming conflict with the Bootstrap component.
 const NavBar = () => {
@@ -23,6 +24,8 @@ const NavBar = () => {
         try {
             await axios.post('dj-rest-auth/logout/');
             setCurrentUser(null);
+            // Remove the token time stamp from local storage when the user is logged out.
+            removeTokenTimestamp();
         }
         catch(err){
             console.log(err)

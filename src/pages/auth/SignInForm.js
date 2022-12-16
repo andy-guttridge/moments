@@ -17,6 +17,7 @@ import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 import { useRedirect } from "../../hooks/useRedirect";
+import { setTokenTimestamp } from "../../utils/utils";
 
 function SignInForm() {
     
@@ -50,8 +51,10 @@ function SignInForm() {
         try {
             // Here we destructure the data returned from the post request, and store the current user authentication status
             // using the setCurrentUserContext object we have access to via the setCurrentUser constant we defined at the top of the file.
+            // Note we use our setTokenTimestamp function to save the token timestamp in local storage.
             const { data } = await axios.post('/dj-rest-auth/login/', signInData);
             setCurrentUser(data.user)
+            setTokenTimestamp(data);
             history.goBack();
         }
         catch(err){
