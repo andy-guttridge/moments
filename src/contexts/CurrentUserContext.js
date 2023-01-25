@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 import { removeTokenTimestamp, shouldRefreshToken } from '../utils/utils';
+import { axiosReq, axiosRes } from '../api/axiosDefaults';
 
 // Here we use the React createContext function to create context objects that we can export for reference in other components.
 export const CurrentUserContext = createContext();
